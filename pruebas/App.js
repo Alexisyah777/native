@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, View, StyleSheet,} from 'react-native';
+import { ActivityIndicator, FlatList, Text, View, StyleSheet, Image } from 'react-native';
 
-const App = () => {
+export default function App() {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
@@ -21,6 +21,29 @@ const App = () => {
     getCharacters();
   }, []);
 
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <Image 
+        source={{ uri: item.image }} 
+        style={styles.characterImage}
+      />
+      <View style={styles.textContainer}>
+        <Text style={styles.name}>{item.name}</Text>
+        <View style={styles.statusContainer}>
+          <View 
+            style={[
+              styles.statusDot, 
+              { backgroundColor: item.status === 'Alive' ? '#4AB696' : item.status === 'Dead' ? '#D63D2E' : '#508B7A' }
+            ]} 
+          />
+          <Text style={styles.status}>
+            {item.status} - {item.species}
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       {isLoading ? (
@@ -29,26 +52,13 @@ const App = () => {
         <FlatList
           data={data}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <View style={styles.textContainer}>
-                <Text style={styles.name}>{item.name}</Text>
-                <Text style={[
-                  styles.status,
-                  { color: item.status === 'Alive' ? '#4AB696' : item.status === 'Dead' ? '#313635' : '#508B7A' }
-                ]}>
-                  {item.status}
-                </Text>
-                <Text style={styles.species}>{item.species}</Text>
-              </View>
-            </View>
-          )}
+          renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
         />
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -75,29 +85,43 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   characterImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: '#4AB696',
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    marginRight: 12,
   },
   textContainer: {
-    marginLeft: 12,
     flex: 1,
     justifyContent: 'center',
   },
   name: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 4,
+    marginBottom: 8,
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
   },
   status: {
     fontSize: 14,
-    marginBottom: 2,
+    color: '#ffffff',
   },
-  species: {
+  locationLabel: {
+    fontSize: 12,
+    color: '#A0A0A0',
+    marginBottom: 4,
+  },
+  locationName: {
     fontSize: 14,
-    color: '#508B7A',
+    color: '#ffffff',
   },
 });
